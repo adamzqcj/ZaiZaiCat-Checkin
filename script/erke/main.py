@@ -16,6 +16,9 @@ cron: 1 1 1 1 1
 
 Author: ZaiZaiCat
 Date: 2025-11-28
+
+Date: 2026-9-25 通知内容增加积分
+
 """
 
 import json
@@ -32,8 +35,6 @@ sys.path.insert(0, str(project_root))
 
 # 导入需要的模块
 from notification import send_notification, NotificationSound
-
-
 
 class ErkeTasks:
     """鸿星尔克签到任务自动化执行类"""
@@ -127,6 +128,7 @@ class ErkeTasks:
             'account_name': account_name,
             'success': False,
             'integral_info': None,
+            'available_pts': None,
             'sign_info': None,
             'error': None
         }
@@ -162,6 +164,7 @@ class ErkeTasks:
                         self.logger.info(f"[{account_name}] 累计积分: {accumulate_points}")
                         self.logger.info(f"[{account_name}] 冻结积分: {frozen_points}")
                         self.logger.info(f"[{account_name}] 可用积分: {available_points}")
+                        result['available_pts'] = available_points
 
                         # 获取积分明细列表
                         page_data = response.get('page', {})
@@ -278,6 +281,7 @@ class ErkeTasks:
                         message = result['sign_info'].get('message', '')
                         if message:
                             content_lines.append(f"     └─ {message}")
+                            content_lines.append(f"     └─ 可用积分：{result['available_pts']}")
 
             content = "\n".join(content_lines)
 
@@ -301,7 +305,6 @@ def main():
     except Exception as e:
         logging.error(f"程序执行失败: {str(e)}")
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main()
